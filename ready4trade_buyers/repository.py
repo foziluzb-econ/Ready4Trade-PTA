@@ -21,10 +21,11 @@ class BuyerRepository:
         selected=list(df.columns) if choice=="all" else columns.get(choice, [])
         mask=pd.Series(False,index=df.index,dtype=bool)
         if choice == "hscode":
-            query_digits = re.sub(r"\D", "", str(query))
-            if not query_digits:
+            query_text = re.sub(r"\.0+$", "", str(query).strip())
+            query_digits = re.sub(r"\D", "", query_text)
+            if not query_digits or len(query_digits) > 6:
                 return df.iloc[0:0]
-            normalized_query = query_digits[-6:].zfill(6)
+            normalized_query = query_digits.zfill(6)
             for column in selected:
                 if column not in df.columns:
                     continue
